@@ -1,0 +1,23 @@
+[project]
+name = "regenai"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "alembic>=1.17.0",
+    "fastapi[all]>=0.120.1",
+    "openai>=2.6.1",
+    "openai-agents>=0.4.2",
+    "psycopg2-binary>=2.9.11",
+    "asyncpg>=0.29.0",
+    "uvicorn>=0.38.0",
+    "python-dotenv>=1.0.0",
+    "sqlalchemy>=2.0.0",
+    "pydantic>=2.0.0",
+    "requests>=2.31.0",
+    "python-multipart>=0.0.6",
+    "uuid>=1.30",
+    "python-jose[cryptography]>=3.3.0",
+    "passlib[bcrypt]>=1.7.4",
+]
