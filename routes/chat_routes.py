@@ -12,6 +12,9 @@ from utiles.schemas import (
 from routes.auth_routes import get_current_user
 from config.database_config import get_db
 from datetime import datetime
+from agent.main_agent import get_agent
+from agent.tools import get_user_latest_form
+from uuid import uuid4
 
 router = APIRouter()
 
@@ -141,8 +144,23 @@ def send_message(
     )
     db.add(user_message)
     
-    # Generate AI response
-    ai_response_text = generate_ai_response(message_data.content, conversation.conversation_type)
+    # Generate AI response using real agent
+    try:
+        agent = get_agent()
+        thread_id = f"conv_{message_data.conversation_id}"
+        form = get_user_latest_form(db, current_user.id)
+        
+        state = {
+            "user_id": current_user.id,
+            "form": form,
+            "message": message_data.content,
+        }
+        
+        result = agent.invoke(state, {"configurable": {"thread_id": thread_id}})
+        ai_response_text = result.get("reply", "I'm here to help, but I couldn't generate a response.")
+    except Exception as e:
+        print(f"Error calling agent: {e}")
+        ai_response_text = "I apologize, but I'm having trouble processing your request. Please try again."
     
     # Create AI message
     ai_message = Message(
@@ -200,57 +218,6 @@ def delete_conversation(
     
     return {"message": "Conversation deleted successfully"}
 
-# Helper function to generate AI responses
-def generate_ai_response(user_message: str, conversation_type: str = None) -> str:
-    """Generate contextual AI responses based on conversation type"""
-    
-    # Simple keyword-based responses for now
-    # In production, this would call your AI agent
-    
-    user_message_lower = user_message.lower()
-    
-    # Climate insights responses
-    if conversation_type == 'climate-insights' or any(word in user_message_lower for word in ['climate', 'air', 'quality', 'pollution']):
-        responses = [
-            "Based on the latest climate data, I can help you understand your area's environmental conditions. Your local air quality index has been moderate recently. I recommend focusing on tree planting and reducing emissions during peak hours.",
-            "Great question about climate action! The data shows that implementing sustainable practices in your area could reduce CO₂ emissions by up to 15%. Would you like specific recommendations?",
-            "Climate monitoring in your region indicates stable conditions. The best actions you can take now include supporting green infrastructure and participating in community environmental initiatives."
-        ]
-    
-    # Farm optimization responses
-    elif conversation_type == 'farm-optimization' or any(word in user_message_lower for word in ['farm', 'crop', 'soil', 'plant']):
-        responses = [
-            "Your soil analysis shows good potential for sustainable farming. Based on your location and climate data, I recommend considering crop rotation and organic fertilizers to improve yield.",
-            "For optimal farm productivity, the weather patterns suggest this is a great time for planting. I can provide specific crop recommendations based on your soil type and water availability.",
-            "Farm optimization tip: Your land characteristics indicate you could benefit from water conservation techniques. Drip irrigation and mulching could improve your crop yield by 20-30%."
-        ]
-    
-    # Community actions responses
-    elif conversation_type == 'community-actions' or any(word in user_message_lower for word in ['community', 'event', 'tree', 'planting']):
-        responses = [
-            "I've identified several community action opportunities in your area! Tree planting events and clean-up drives are scheduled for this month. These initiatives have shown great impact on local air quality.",
-            "Community engagement is key to climate action! Based on participation data, coordinated efforts in your area have already offset 2.5 tons of CO₂. Would you like to join upcoming events?",
-            "Your community has been very active! I recommend the upcoming tree planting drive on Saturday. Weather conditions will be ideal, and we expect good turnout."
-        ]
-    
-    # Pollution alerts responses
-    elif conversation_type == 'pollution-alerts' or any(word in user_message_lower for word in ['alert', 'pollution', 'warning']):
-        responses = [
-            "Air quality monitoring shows improvement in your region. Recent community actions have reduced pollution levels by 8%. Keep up the great work!",
-            "Pollution alert: Air quality is expected to be moderate today. I recommend limiting outdoor activities during peak traffic hours (8-10 AM and 5-7 PM).",
-            "Good news! Pollution levels have decreased compared to last week. Your community's eco-friendly initiatives are making a real difference."
-        ]
-    
-    # General responses
-    else:
-        responses = [
-            "That's a great question! Based on environmental data and your goals, I can provide tailored recommendations. What specific aspect of climate action would you like to focus on?",
-            "I'm here to help with climate action, sustainable farming, and community environmental initiatives. How can I assist you today?",
-            "Thanks for reaching out! I analyze real-time environmental data to provide actionable insights. What would you like to know more about?",
-            "Excellent! I can help you understand climate patterns, optimize farming practices, or find community action opportunities. What interests you most?"
-        ]
-    
-    # Return a random response from the appropriate category
-    import random
-    return random.choice(responses)
+# Note: AI responses are now generated using the real LangGraph agent
+# The agent uses Gemini AI with user's farm data and context enrichment
 
