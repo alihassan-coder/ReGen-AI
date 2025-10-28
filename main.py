@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from routes.auth_routes import router as auth_router
 from routes.forme_routes import router as forms_router
 from routes.agent_routes import router as agent_router
+from routes.chat_routes import router as chat_router
 
 app = FastAPI(title="RegenAI API", version="1.0.0")
 
@@ -19,6 +20,7 @@ app.add_middleware(
 app.include_router(auth_router, prefix="/auth", tags=["authentication"])
 app.include_router(forms_router)
 app.include_router(agent_router)
+app.include_router(chat_router, prefix="/chat", tags=["chat"])
 
 @app.get("/")
 def read_root():

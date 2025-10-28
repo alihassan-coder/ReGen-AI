@@ -1,5 +1,6 @@
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List
+from datetime import datetime
 
 class UserRegister(BaseModel):
     first_name: str
@@ -72,6 +73,50 @@ class FormResponseSchema(BaseModel):
     specific_crop: Optional[str] = None
     fertilizers_preference: Optional[str] = None
     last_planted_at: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
+# Chat Schemas
+class MessageCreate(BaseModel):
+    conversation_id: int
+    content: str
+
+class MessageResponse(BaseModel):
+    id: int
+    conversation_id: int
+    sender: str
+    content: str
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+class ConversationCreate(BaseModel):
+    title: str
+    conversation_type: Optional[str] = None
+
+class ConversationResponse(BaseModel):
+    id: int
+    user_id: int
+    title: str
+    conversation_type: Optional[str] = None
+    created_at: datetime
+    updated_at: datetime
+    last_message: Optional[str] = None
+    unread_count: int = 0
+
+    class Config:
+        from_attributes = True
+
+class ConversationWithMessages(BaseModel):
+    id: int
+    user_id: int
+    title: str
+    conversation_type: Optional[str] = None
+    created_at: datetime
+    updated_at: datetime
+    messages: List[MessageResponse] = []
 
     class Config:
         from_attributes = True
