@@ -21,3 +21,57 @@ class UserResponse(BaseModel):
     last_name: str
     email: str
     is_active: bool
+
+class FormCreate(BaseModel):
+    # user_id will be injected server-side from auth context
+    location: str
+    area_type: str
+    soil_type: str
+    water_source: str
+    irrigation: str
+    temperature: str
+    rainfall: str
+    sunlight: str
+    land_size: str
+    goal: str
+    crop_duration: str
+    specific_crop: Optional[str] = None
+    fertilizers_preference: Optional[str] = None
+    last_planted_at: Optional[str] = None
+
+class FormUpdate(BaseModel):
+    location: Optional[str] = None
+    area_type: Optional[str] = None
+    soil_type: Optional[str] = None
+    water_source: Optional[str] = None
+    irrigation: Optional[str] = None
+    temperature: Optional[str] = None
+    rainfall: Optional[str] = None
+    sunlight: Optional[str] = None
+    land_size: Optional[str] = None
+    goal: Optional[str] = None
+    crop_duration: Optional[str] = None
+    specific_crop: Optional[str] = None
+    fertilizers_preference: Optional[str] = None
+    last_planted_at: Optional[str] = None
+
+class FormResponseSchema(BaseModel):
+    id: int
+    user_id: int
+    location: str
+    area_type: str
+    soil_type: str
+    water_source: str
+    irrigation: str
+    temperature: str
+    rainfall: str
+    sunlight: str
+    land_size: str
+    goal: str
+    crop_duration: str
+    specific_crop: Optional[str] = None
+    fertilizers_preference: Optional[str] = None
+    last_planted_at: Optional[str] = None
+
+    class Config:
+        from_attributes = True

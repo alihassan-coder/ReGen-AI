@@ -9,6 +9,8 @@ dependencies = [
     "fastapi[all]>=0.120.1",
     "openai>=2.6.1",
     "openai-agents>=0.4.2",
+    "langgraph>=0.2.38",
+    "langchain-openai>=0.2.3",
     "psycopg2-binary>=2.9.11",
     "asyncpg>=0.29.0",
     "uvicorn>=0.38.0",
@@ -20,4 +22,7 @@ dependencies = [
     "uuid>=1.30",
     "python-jose[cryptography]>=3.3.0",
     "passlib[bcrypt]>=1.7.4",
+    "langchain-core>=1.0.1",
+    "langchain-google-genai>=3.0.0",
+    "typing-extensions>=4.15.0",
 ]
