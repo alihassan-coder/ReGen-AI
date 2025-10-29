@@ -120,3 +120,7 @@ class ConversationWithMessages(BaseModel):
 
     class Config:
         from_attributes = True
+
+# Conversation title update schema
+class ConversationTitleUpdate(BaseModel):
+    title: str

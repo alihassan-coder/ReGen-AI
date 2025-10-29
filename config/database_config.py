@@ -21,13 +21,22 @@ if not async_url.startswith("postgresql+asyncpg://"):
     async_url = async_url.replace("postgresql://", "postgresql+asyncpg://")
 
 # Create async database engine for OpenAI Agents SDK
-async_engine = create_async_engine(async_url, echo=EnvironmentConfig.DEBUG)
+async_engine = create_async_engine(
+    async_url,
+    echo=EnvironmentConfig.DEBUG,
+    pool_pre_ping=True,
+)
 
 # Create sync database engine for regular operations - ensure it uses psycopg2
 sync_url = DATABASE_URL
 if sync_url.startswith("postgresql+asyncpg://"):
     sync_url = sync_url.replace("postgresql+asyncpg://", "postgresql://")
-sync_engine = create_engine(sync_url, echo=EnvironmentConfig.DEBUG)
+sync_engine = create_engine(
+    sync_url,
+    echo=EnvironmentConfig.DEBUG,
+    pool_pre_ping=True,
+    pool_recycle=300,
+)
 
 # Create session factories
 AsyncSessionLocal = sessionmaker(
